@@ -1,6 +1,7 @@
 #
 # Makefile for Linux samplefs
 #
+CONFIG_MODULE_SIG=n
 obj-m += samplefs.o
 
 samplefs-objs := super.o

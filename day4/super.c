@@ -76,8 +76,10 @@ samplefs_parse_mount_options(char *options, struct samplefs_sb_info *sfs_sb)
 	char *data;
 	int size;
 
-	if (!options)
+	if (!options) {
+		printk(KERN_INFO "no options\n");
 		return;
+	}
 
 	printk(KERN_INFO "samplefs: parsing mount options %s\n", options);
 
@@ -165,9 +167,7 @@ static int samplefs_fill_super(struct super_block * sb, void * data, int silent)
 	if (!inode)
 		return -ENOMEM;
 
-#ifdef CONFIG_SAMPLEFS_DEBUG
 	printk(KERN_INFO "samplefs: about to alloc s_fs_info\n");
-#endif
 	sb->s_fs_info = kzalloc(sizeof(struct samplefs_sb_info), GFP_KERNEL);
 	sfs_sb = SFS_SB(sb);
 	if (!sfs_sb) {
@@ -182,12 +182,14 @@ static int samplefs_fill_super(struct super_block * sb, void * data, int silent)
 	if (!sb->s_root) {
 		iput(inode);
 		kfree(sfs_sb);
+                printk(KERN_INFO "Failed\n");
 		return -ENOMEM;
 	}
 	
 	/* below not needed for many fs - but an example of per fs sb data */
 	sfs_sb->local_nls = load_nls_default();
 
+	printk(KERN_INFO "before samplefs_parse_mount_options\n");
 	samplefs_parse_mount_options(data, sfs_sb);
 	
 	/* FS-FILLIN your filesystem specific mount logic/checks here */
